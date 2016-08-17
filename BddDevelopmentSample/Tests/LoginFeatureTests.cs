@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using BddDevelopmentSample.Login;
+using BddDevelopmentSample.Models;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace BddDevelopmentSample.Tests
         public LoginFeatureTests()
         {
             model = new LoginModel();
-            loginProvider = new Mock<ILoginProvider>();
+            loginProvider = new LoginProvider();
         }
 
         [Given(@"I have entered username in username field")]
@@ -43,7 +45,22 @@ namespace BddDevelopmentSample.Tests
             Assert.AreEqual("Success", model.Message);
         }
 
+        [Given(@"I have entered invalid username in username field")]
+        public void GivenIHaveEnteredInvalidUsernameInUsernameField()
+        {
+            model.Username = "Invalid usename";
+        }
 
-
+        [When(@"I click login button")]
+        public void WhenIClickLoginButton()
+        {
+            this.loginProvider.Login(model);
+        }
+        
+        [Then(@"system should validate entered credentials and show username invalid error messages")]
+        public void ThenSystemShouldValidateEnteredCredentialsAndShowUsernameInvalidErrorMessages()
+        {
+            Assert.AreEqual("Invalid Username", model.Message);
+        }      
     }
 }
